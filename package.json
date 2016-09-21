@@ -1,7 +1,7 @@
 {
   "name": "filejson",
-  "version": "1.0.4",
-  "description": "Use a JSON file to automatically save a JavaScript object to disk whenever it changes.",
+  "version": "1.0.5",
+  "description": "Use a JSON encoded file to automatically save a JavaScript value to disk whenever that value changes.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,13 +18,26 @@
     "drive",
     "stateful",
     "storage",
-    "hard drive",
+    "hard",
+    "drive",
     "json",
+    "semi",
+    "structured",
+    "data",
+    "document-oriented",
+    "database",
+    "document-store",
+    "document",
+    "noSQL",
+    "Semi-structured",
+    "structured",
+    "structured-data",
     "ES6",
     "Proxy",
     "Proxies",
     "auto",
     "autosave",
+    "auto-save",
     "automatically"
   ]
 }
