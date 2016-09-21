@@ -1,5 +1,8 @@
 var fs = require("fs");
 
+/**
+ * @class
+ */
 function Filejson(cfg) {
     "use stict";
 
@@ -49,7 +52,7 @@ function Filejson(cfg) {
         }
     };
 
-    if(typeof cfg === undefined) {
+    if( typeof cfg === "undefined" ) {
         cfg = {};
     }
 
@@ -94,7 +97,17 @@ function Filejson(cfg) {
         }.bind(this), this.cfg.delay);
     };
 
-    this.load = function(filename, object, callback) {
+    /**
+     * This is the starting point for using Filejson. It is within this function's callback that you will be able to use this module.
+     * @param {!string} filename - The filename where you would like to load/save changes to. The filename must exist.
+     * @param {*} [overwriteWith] - You can optionally overwrite the contents of filename. Most of the time this will not be needed.
+     * @param {!callback} callback - The callback that handles the response.
+     */
+    this.load = function() {
+        var filename = arguments[0];
+        var overwriteWith = (typeof arguments[2] === "undefined") ? undefined : arguments[1];
+        var callback = (typeof arguments[2] === "undefined") ? arguments[1] : arguments[2];
+
         var updateContentsWithoutSaving = function(contents) {
             this.paused = true;
             this.contents = contents;
@@ -103,9 +116,13 @@ function Filejson(cfg) {
 
         this.cfg.filename = filename;
 
-        if( callback === undefined ) {
-            callback = object;
-
+        if(overwriteWith) {
+            updateContentsWithoutSaving(overwriteWith);
+            this.save(function(error) {
+                callback(error, this);
+            }.bind(this));
+        }
+        else {
             fs.readFile(filename, "utf-8", function(error, contents) {
                 if (error) {
                     callback(error, this);
@@ -129,15 +146,15 @@ function Filejson(cfg) {
                 
             }.bind(this));
         }
-        else {
-            updateContentsWithoutSaving(object);
-            this.save(function(error) {
-                callback(error, this);
-            }.bind(this));
-        }
     };
 
     return new Proxy(this, handler);
+
+    /**
+     * @callback callback
+     * @param {?string} error - callback error
+     * @param {!Object} Filejson instance - returns the instance
+     */
 
 }
 
