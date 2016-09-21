@@ -1,6 +1,6 @@
 {
   "name": "filejson",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Use a JSON file to automatically save a JavaScript object to disk whenever it changes.",
   "main": "app.js",
   "scripts": {
