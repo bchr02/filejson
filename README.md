@@ -1,21 +1,26 @@
 # [filejson](https://github.com/bchr02/filejson)
-Use a JSON file to automatically save a JavaScript object to disk whenever it changes.
+Use a JSON encoded file to automatically save a JavaScript value to disk whenever that value changes. A value can be a Javascript string, number, boolean, null, object, or an array. The value can be structured in an array or an object to allow for more complex data stores. These structures can also be nested. As a result, you can use this module as a simple document store or Document-oriented database.
 
 ## Requirements
 [ECMAScript 6 Reflect and Proxy objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)  support, which is found natively in Node.js >= 6. If you are using a version of Node.js < 6, use a polyfill, such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect). Proxy support is key for this module working so eloquently. Other non-Proxy based modules require function calls each time you wish to save an object. Unlike those, [filejson](https://github.com/bchr02/filejson) is as easy as ```file.contents = "my new value"``` or ```file.contents = {"msg": "Hello World"}``` and the changes are automatically saved to disk.
 
-## Install (Node.js >= 6)
+## Installation
+
 ```javascript
 npm install filejson --save
 ```
 
-## Install (Node.js < 6)
-If you are using a version of Node.js < 6 then you will also need to install a polyfill such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect):
+## Additional installation and usage steps for those using Node.js 5 or earlier
+
+* You will need a polyfill such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect):
 ```
 npm install harmony-reflect --save
-npm install filejson --save
 ```
-And then when you want to run your app you will need to use the node --harmony_proxies flag:
+* In addition to requiring filejson, you will need to require harmony-reflect at the top of your app, like this:
+```javascript
+var Reflect = require('harmony-reflect');
+```
+* Lastly, every time you run your app you will need to use the node --harmony_proxies flag, like this:
 ```
 node --harmony_proxies index.js
 ```
