@@ -1,24 +1,30 @@
-# filejson
+# [filejson](https://github.com/bchr02/filejson)
 Use a JSON file to automatically save a JavaScript object to disk whenever it changes.
 
 ## Requirements
-Node.js >= 6
+[ECMAScript 6 Reflect and Proxy objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)  support, which is found natively in Node.js >= 6. If you are using a version of Node.js < 6, use a polyfill, such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect). Proxy support is key for this module working so eloquently. Other non-Proxy based modules require function calls each time you wish to save an object. Unlike those, [filejson](https://github.com/bchr02/filejson) is as easy as ```file.contents = "my new value"``` or ```file.contents = {"msg": "Hello World"}``` and the changes are automatically saved to disk.
 
-Node.js version 6 introduces support for [ES6 Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) which is key for this working so eloquently. Other non-Proxy based solutions out there require function calls each time you wish to save. Unlike those filejson is as easy as file.contents = ```"my new value"``` or ```file.contents = {"msg": "Hello World"}``` and the changes are automatically saved to disk.
-
-If you need to get this working with an older version of Node.js, you may be able to with a polyfill such as [GoogleChrome/proxy-polyfill](https://github.com/GoogleChrome/proxy-polyfill) but I haven't tried it.
-
-## Install
+## Install (Node.js >= 6)
 ```javascript
 npm install filejson --save
 ```
 
-## Example
+## Install (Node.js < 6)
+If you are using a version of Node.js < 6 then you will also need to install a polyfill such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect):
+```
+npm install harmony-reflect
+```
+And then when you want to run your app you will need to use the node --harmony_proxies flag:
+```
+node --harmony_proxies index.js
+```
+
+## Example usage
 ```javascript
 var Filejson = require("filejson");
 var file1 = new Filejson();
 
-file1.load("file1.json", proceed); // assuming file1.json contains {"abc": "123"}
+file1.load("file1.json", proceed); // file1.json contains {"abc": "123"}
 
 function proceed(error, file) {
     if(error) {
@@ -35,4 +41,4 @@ function proceed(error, file) {
 }
 ```
 
-All operations happen asynchronously and operations are throttled to prevent a race condition.
+All operations happen asynchronously and operations are throttled to prevent a fs.writeFile race condition.

@@ -1,10 +1,9 @@
 {
   "name": "filejson",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Use a JSON file to automatically save a JavaScript object to disk whenever it changes.",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Bill Christo",
@@ -13,12 +12,13 @@
     "eslint": "^3.5.0"
   },
   "dependencies": {},
-  "engines": {
-    "node": ">=6"
-  },
   "keywords": [
     "file",
     "disk",
+    "drive",
+    "stateful",
+    "storage",
+    "hard drive",
     "json",
     "ES6",
     "Proxy",
