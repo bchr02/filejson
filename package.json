@@ -1,6 +1,6 @@
 {
   "name": "filejson",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Use a JSON file to automatically save a JavaScript object to disk whenever it changes.",
   "main": "app.js",
   "scripts": {
@@ -15,5 +15,16 @@
   "dependencies": {},
   "engines": {
     "node": ">=6"
-  }
+  },
+  "keywords": [
+    "file",
+    "disk",
+    "json",
+    "ES6",
+    "Proxy",
+    "Proxies",
+    "auto",
+    "autosave",
+    "automatically"
+  ]
 }
