@@ -12,7 +12,8 @@ npm install filejson --save
 ## Install (Node.js < 6)
 If you are using a version of Node.js < 6 then you will also need to install a polyfill such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect):
 ```
-npm install harmony-reflect
+npm install harmony-reflect --save
+npm install filejson --save
 ```
 And then when you want to run your app you will need to use the node --harmony_proxies flag:
 ```
