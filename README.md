@@ -46,5 +46,3 @@ function proceed(error, file) {
 
 }
 ```
-
-All operations happen asynchronously and operations are throttled to prevent a fs.writeFile race condition.

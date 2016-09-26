@@ -1,6 +1,6 @@
 {
   "name": "filejson",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Use a JSON encoded file to automatically save a JavaScript value to disk whenever that value changes.",
   "main": "app.js",
   "scripts": {
@@ -9,9 +9,13 @@
   "author": "Bill Christo",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^3.5.0"
+    "eslint": "^3.6.0"
   },
   "dependencies": {},
+  "bugs": {
+    "url": "https://github.com/bchr02/filejson/issues"
+  },
+  "homepage": "https://github.com/bchr02/filejson#readme",
   "keywords": [
     "file",
     "disk",

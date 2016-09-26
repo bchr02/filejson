@@ -8,9 +8,8 @@ function Filejson(cfg) {
 
     var self = this;
     
-    // Used to store a reference for our setTimeout function.
-    // The setTimeout function is used to throttle the saving to disk.
-    var task;
+    // Used to store a reference to our setImmediate scheduled timers so that we can cancel all in the queue execpt the last one.
+    var scheduledTimers;
 
     // Prevents the oportunity for a race condition to occure in the scenario where one fs.writeFile operation tries to overlap another.
     // This could be the result of slow IO or a large object being written.
@@ -29,7 +28,28 @@ function Filejson(cfg) {
             return Reflect.get(target, key, receiver);
         },
         set: function(target, key, value, receiver) {
-            
+            var check = function(value, tree) {
+                var t = typeof value;
+                if(!(t ===  'string' || t ===  'number' || t ===  'object' || t ===  'boolean' || t ===  'undefined')) {
+                    throw new Error("NON-JSON COMPATIBLE TYPE FOUND. " + t + " found within: " + tree);
+                }
+            };
+            var loopAll = function(obj, tree) {
+                for(var key in obj){
+                    tree += "." + key;
+                    if(typeof obj[key] !== 'object'){
+                        check(obj[key], tree);
+                    }
+                    else {
+                        loopAll(obj[key], tree);
+                    }
+                }
+            };
+
+            if(!self.cfg.speed) {
+                loopAll(self.contents, "file.contents");
+            }
+
             if(!self.cfg.filename) {
                 throw new Error("You must specify a filename");
             }
@@ -37,7 +57,7 @@ function Filejson(cfg) {
             if( value instanceof Object ) {
                 value = new Proxy(value, this);
             }
-
+ 
             // The default behavior to store the value
             Reflect.set(target, key, value, receiver);
             
@@ -59,19 +79,16 @@ function Filejson(cfg) {
     this.cfg = {
         filename: cfg.filename || "",
         space: cfg.space || 2,
-        delay: cfg.delay || 3000,
-        verbose: cfg.verbose || false
+        verbose: cfg.verbose || false,
+        speed: cfg.speed || false
     };
 
     // Boolean - pauses any future changes to this.contents from auto triggering a save to disk
     this.paused;
 
-    // Boolean - if a race condition needed to be avoided then there will be pending writes
-    this.pendingWrites = false;
-
     this.save = function(callback) {
-        clearTimeout(task);
-        task = setTimeout(function() {
+        clearImmediate(scheduledTimers);
+        scheduledTimers = setImmediate(function() {
             var contents;
             try {
                 contents = JSON.stringify(this.contents, null, this.cfg.space);
@@ -80,9 +97,8 @@ function Filejson(cfg) {
                 callback(err, this);
                 return;
             }
-            if(!saving) {
+            if(!saving) { // prevents possible race condition
                 saving = true;
-                this.pendingWrites = false;
                 fs.writeFile(this.cfg.filename, contents, function(error) {
                     saving = false;
                     if(!error) {
@@ -92,9 +108,9 @@ function Filejson(cfg) {
                 }.bind(this));
             }
             else {
-                this.pendingWrites = true;
+                this.save(callback);
             }
-        }.bind(this), this.cfg.delay);
+        }.bind(this));
     };
 
     /**
