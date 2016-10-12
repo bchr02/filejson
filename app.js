@@ -57,10 +57,7 @@ function Filejson(cfg) {
             if( value instanceof Object ) {
                 value = new Proxy(value, this);
             }
- 
-            // The default behavior to store the value
-            Reflect.set(target, key, value, receiver);
-            
+
             if(!self.paused) {
                 self.save(function(error) {
                     if(error) {
@@ -69,6 +66,9 @@ function Filejson(cfg) {
                     }
                 });
             }
+
+            // The default behavior to store the value
+            return Reflect.set(target, key, value, receiver);
         }
     };
 
