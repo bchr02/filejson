@@ -30,14 +30,14 @@ function Filejson(cfg) {
         set: function(target, key, value, receiver) {
             var check = function(value, tree) {
                 var t = typeof value;
-                if(!(t ===  'string' || t ===  'number' || t ===  'object' || t ===  'boolean' || t ===  'undefined')) {
+                if(!(t ===  "string" || t ===  "number" || t ===  "object" || t ===  "boolean" || t ===  "undefined")) {
                     throw new Error("NON-JSON COMPATIBLE TYPE FOUND. " + t + " found within: " + tree);
                 }
             };
             var loopAll = function(obj, tree) {
                 for(var key in obj){
                     tree += "." + key;
-                    if(typeof obj[key] !== 'object'){
+                    if(typeof obj[key] !== "object"){
                         check(obj[key], tree);
                     }
                     else {
@@ -46,11 +46,7 @@ function Filejson(cfg) {
                 }
             };
 
-            if(!self.cfg.speed) {
-                loopAll(self.contents, "file.contents");
-            }
-
-            if(!self.cfg.filename) {
+            if( !self.cfg.filename ) {
                 throw new Error("You must specify a filename");
             }
 
@@ -58,7 +54,14 @@ function Filejson(cfg) {
                 value = new Proxy(value, this);
             }
 
-            if(!self.paused) {
+            // The default behavior to store the value
+            Reflect.set(target, key, value, receiver);
+
+            if( !self.cfg.speed ) {
+                loopAll(self.contents, "file.contents");
+            }
+
+            if( !self.paused ) {
                 self.save(function(error) {
                     if(error) {
                         console.error(error);
@@ -67,8 +70,8 @@ function Filejson(cfg) {
                 });
             }
 
-            // The default behavior to store the value
-            return Reflect.set(target, key, value, receiver);
+            // A Proxy must return true
+            return true;
         }
     };
 
