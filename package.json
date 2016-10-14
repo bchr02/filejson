@@ -1,6 +1,6 @@
 {
   "name": "filejson",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Use a JSON encoded file to automatically save a JavaScript value to disk whenever that value changes.",
   "main": "app.js",
   "scripts": {

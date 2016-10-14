@@ -46,6 +46,11 @@ function Filejson(cfg) {
                 }
             };
 
+            if( target == self && key != "contents") {
+                // When target is at the root object but we are not updating the "contents" property then just store the value (the default action).
+                return Reflect.set(target, key, value, receiver);
+            }
+
             if( !self.cfg.filename ) {
                 throw new Error("You must specify a filename");
             }
