@@ -1,7 +1,7 @@
 {
   "name": "filejson",
-  "version": "1.0.9",
-  "description": "Use a JSON encoded file to automatically save a JavaScript value to disk whenever that value changes.",
+  "version": "1.0.10",
+  "description": "Seamlessly syncs a JavaScript value to a JSON file in the background whenever that value changes.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,7 @@
   "author": "Bill Christo",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^3.7.1"
+    "eslint": "^3.8.1"
   },
   "dependencies": {},
   "bugs": {
@@ -33,6 +33,9 @@
     "document-store",
     "document",
     "noSQL",
+    "ORM",
+    "RDBMS",
+    "ODBMS",
     "Semi-structured",
     "structured",
     "structured-data",
