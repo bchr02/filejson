@@ -1,6 +1,6 @@
 {
   "name": "filejson",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Seamlessly syncs a JavaScript value to a JSON file in the background whenever that value changes.",
   "main": "app.js",
   "scripts": {
