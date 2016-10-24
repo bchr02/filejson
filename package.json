@@ -15,6 +15,10 @@
   "bugs": {
     "url": "https://github.com/bchr02/filejson/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bchr02/filejson.git"
+  },
   "homepage": "https://github.com/bchr02/filejson#readme",
   "keywords": [
     "file",
