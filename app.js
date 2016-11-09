@@ -23,24 +23,30 @@ function Filejson(cfg) {
 
     var handler = {
         get: function(target, key, receiver) {
-            // return target[key];
-            // return new Proxy(target[key], this);
-            return Reflect.get(target, key, receiver);
+            if (key === "__isProxy") {
+                // Implementing a virtual __isProxy key allows us to check whether an object is already a Proxy.
+                return true;    
+            }
+
+            return Reflect.get(target, key, receiver); 
         },
         set: function(target, key, value, receiver) {
             var check = function(value, tree) {
                 var t = typeof value;
                 if(!(t ===  "string" || t ===  "number" || t ===  "object" || t ===  "boolean" || t ===  "undefined")) {
-                    throw new Error("NON-JSON COMPATIBLE TYPE FOUND. " + t + " found within: " + tree);
+                    throw new Error("NON-JSON COMPATIBLE TYPE FOUND. " + t + " found at: " + tree);
                 }
             };
-            var loopAll = function(obj, tree) {
-                for(var key in obj){
-                    tree += "." + key;
-                    if(typeof obj[key] !== "object"){
+            var loopAll = function(obj, parent) {
+                var tree = parent || "";
+
+                for(var key in obj) {
+                    if(typeof obj[key] !== "object") {
                         check(obj[key], tree);
                     }
                     else {
+                        tree = parent + "." + key;
+                        obj[key] = new Proxy(obj[key], handler);
                         loopAll(obj[key], tree);
                     }
                 }
@@ -55,16 +61,13 @@ function Filejson(cfg) {
                 throw new Error("You must specify a filename");
             }
 
-            if( value instanceof Object ) {
-                value = new Proxy(value, this);
+            if( value instanceof Object && value.__isProxy === undefined) {
+                value = new Proxy(value, handler);
+                loopAll(value, "...");
             }
 
             // The default behavior to store the value
             Reflect.set(target, key, value, receiver);
-
-            if( !self.cfg.speed ) {
-                loopAll(self.contents, "file.contents");
-            }
 
             if( !self.paused ) {
                 self.save(function(error) {
@@ -87,8 +90,7 @@ function Filejson(cfg) {
     this.cfg = {
         filename: cfg.filename || "",
         space: cfg.space || 2,
-        verbose: cfg.verbose || false,
-        speed: cfg.speed || false
+        verbose: cfg.verbose || false
     };
 
     // Boolean - pauses any future changes to this.contents from auto triggering a save to disk
