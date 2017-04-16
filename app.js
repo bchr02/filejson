@@ -30,6 +30,22 @@ function Filejson(cfg) {
 
             return Reflect.get(target, key, receiver); 
         },
+        deleteProperty: function(target, property) {
+            // The default behavior to delete the value
+            Reflect.deleteProperty(target, property);
+
+            if( !self.paused ) {
+                self.save(function(error) {
+                    if(error) {
+                        console.error(error);
+                        return;
+                    }
+                });
+            }
+
+            // The deleteProperty method must return a Boolean indicating whether or not the property has been successfully deleted.
+            return true;
+        },
         set: function(target, key, value, receiver) {
             var check = function(value, tree) {
                 var t = typeof value;
