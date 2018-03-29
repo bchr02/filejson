@@ -57,7 +57,7 @@ function Filejson(cfg) {
                 var tree = parent || "";
 
                 for(var key in obj) {
-                    if(typeof obj[key] !== "object") {
+                    if(typeof obj[key] !== "object" || ( typeof obj[key] === "object" && obj[key] === null /* fixes #10 */ ) ) {
                         check(obj[key], tree);
                     }
                     else {
