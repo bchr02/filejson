@@ -4,7 +4,7 @@ var fs = require("fs");
  * @class
  */
 function Filejson(cfg) {
-    "use stict";
+    "use strict";
 
     var self = this;
     
