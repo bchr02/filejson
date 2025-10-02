@@ -1,17 +1,26 @@
 {
   "name": "filejson",
-  "version": "1.0.15",
-  "description": "Seamlessly syncs a JavaScript value to a JSON file in the background whenever that value changes.",
+  "version": "1.2.0",
+  "description": "Zero-config automatic JSON file persistence with atomic writes, debouncing, and crash safety. Just modify objects, changes save automatically.",
   "main": "app.js",
+  "types": "index.d.ts",
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/filejson.test.js --timeout 5000",
+    "test:watch": "mocha test/filejson.test.js --watch",
+    "test:coverage": "c8 --reporter=text --reporter=html mocha test/filejson.test.js --timeout 5000",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": "Bill Christo",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^3.19.0"
+    "c8": "^10.1.3",
+    "eslint": "^8.57.0",
+    "mocha": "^8.4.0"
   },
-  "dependencies": {},
   "bugs": {
     "url": "https://github.com/bchr02/filejson/issues"
   },
@@ -21,35 +30,35 @@
   },
   "homepage": "https://github.com/bchr02/filejson#readme",
   "keywords": [
-    "file",
-    "disk",
-    "drive",
-    "stateful",
-    "storage",
-    "hard",
-    "drive",
     "json",
-    "semi",
-    "structured",
-    "data",
-    "document-oriented",
+    "file",
+    "storage",
+    "persistence",
     "database",
-    "document-store",
-    "document",
-    "noSQL",
-    "ORM",
-    "RDBMS",
-    "ODBMS",
-    "Semi-structured",
-    "structured",
-    "structured-data",
-    "ES6",
-    "Proxy",
-    "Proxies",
-    "auto",
-    "sync",
     "autosave",
     "auto-save",
-    "automatically"
+    "atomic-writes",
+    "crash-safe",
+    "debounce",
+    "sync",
+    "state",
+    "config",
+    "settings",
+    "cache",
+    "local-storage",
+    "filesystem",
+    "data-store",
+    "proxy",
+    "reactive",
+    "automatic",
+    "nosql",
+    "document-store",
+    "embedded-database",
+    "zero-config",
+    "typescript",
+    "async-await",
+    "promises",
+    "node",
+    "nodejs"
   ]
 }

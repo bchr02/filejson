@@ -1,0 +1,6 @@
+{
+  "spec": "test/filejson.test.js",
+  "timeout": 5000,
+  "color": true,
+  "reporter": "spec"
+}

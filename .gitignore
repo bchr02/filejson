@@ -35,3 +35,15 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# Test files (generated during tests)
+test/test-files/
+*.test.json
+callback-test.json
+examples-atomic/
+examples-exit-handler/
+
+# Coverage HTML reports
+coverage/
+.c8
+
