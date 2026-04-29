@@ -1,0 +1,132 @@
+# filejson
+
+> Zero-config automatic JSON file persistence for Node.js with atomic writes, debouncing, and crash safety.
+
+## What it does
+
+`filejson` wraps a plain JavaScript object in an ES6 Proxy. Any mutation to
+`instance.contents` (set, delete, nested assignment) is automatically detected
+and written back to a JSON file on disk — no explicit save calls required for
+normal usage.
+
+## Installation
+
+```
+npm install filejson
+```
+
+## Core API
+
+### `new Filejson(cfg?)`
+
+Constructor. Accepts an optional configuration object:
+
+| Option         | Type    | Default | Description                                           |
+|----------------|---------|---------|-------------------------------------------------------|
+| `filename`     | string  | `""`    | Path to the JSON file (also set by `load()`).         |
+| `space`        | number  | `2`     | JSON indentation spaces passed to `JSON.stringify`.   |
+| `verbose`      | boolean | `false` | Log save/load events to stdout.                       |
+| `saveDelay`    | number  | `100`   | Debounce delay in milliseconds before writing to disk.|
+| `atomicWrites` | boolean | `true`  | Write to a temp file then rename (crash-safe).        |
+
+### `instance.load(filename, [overwriteWith], [callback])` → `Promise | void`
+
+Reads and parses the JSON file at `filename`, sets `instance.contents` to the
+parsed value, and stores `filename` for future saves. Optionally overwrites
+the file with `overwriteWith`. Returns a Promise when no callback is supplied.
+
+### `instance.save([callback])` → `Promise | void`
+
+Debounced async save. Clears any pending timer and schedules a new write after
+`cfg.saveDelay` ms (default 100 ms). Uses atomic writes by default
+(write-to-temp + rename). Returns a Promise when no callback is supplied.
+
+### `instance.saveSync()` → `instance`
+
+Synchronous save. Cancels any pending debounced save and writes immediately.
+Intended for use in process exit handlers where async operations may not
+complete. Throws on serialization or I/O errors.
+
+### `instance.contents`
+
+The live JavaScript object that is persisted. Any property assignment or
+deletion on this object (including deeply nested paths) automatically triggers
+`save()`.
+
+### `instance.paused`
+
+Boolean. Set to `true` to temporarily suppress automatic saves while making
+bulk mutations; set back to `false` when done. `load()` sets this internally
+during initialisation.
+
+## Usage patterns
+
+### Callback style
+```js
+const Filejson = require('filejson');
+const file = new Filejson();
+
+file.load('./data.json', function(err, f) {
+  if (err) throw err;
+  f.contents.counter = (f.contents.counter || 0) + 1; // auto-saved
+});
+```
+
+### Async/await style
+```js
+const Filejson = require('filejson');
+const file = new Filejson();
+
+const f = await file.load('./data.json');
+f.contents.name = 'Alice'; // auto-saved after 100 ms
+```
+
+### Overwrite file on load
+```js
+const f = await file.load('./data.json', { version: 1 });
+```
+
+### Exit handler (synchronous save)
+```js
+process.on('SIGINT', () => {
+  file.saveSync();
+  process.exit(0);
+});
+```
+
+### Bulk mutations (pause auto-save)
+```js
+file.paused = true;
+file.contents.a = 1;
+file.contents.b = 2;
+file.contents.c = 3;
+file.paused = false;
+await file.save(); // single write for all three changes
+```
+
+### Custom debounce / disable atomic writes
+```js
+const file = new Filejson({ saveDelay: 500, atomicWrites: false });
+```
+
+## Caveats
+
+- The JSON file **must exist** before calling `load()` unless `overwriteWith`
+  is provided to create/overwrite it.
+- Only JSON-compatible types are allowed in `contents`
+  (string, number, boolean, object, array, null). Assigning functions or
+  Symbols throws an error.
+- `save()` is debounced: rapid successive mutations result in a single disk
+  write after the delay. If you need an immediate write use `saveSync()` or
+  await `save()` and then check that the delay has elapsed.
+- Concurrent async saves are serialised internally; if a write is in progress a
+  new `save()` call reschedules itself rather than overlapping.
+- TypeScript types are available via the bundled `index.d.ts`.
+
+## Repository
+
+https://github.com/bchr02/filejson
+
+## License
+
+MIT
