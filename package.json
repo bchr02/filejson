@@ -1,6 +1,6 @@
 {
   "name": "filejson",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Zero-config automatic JSON file persistence with atomic writes, debouncing, and crash safety. Just modify objects, changes save automatically.",
   "main": "app.js",
   "types": "index.d.ts",
