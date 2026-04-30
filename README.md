@@ -1,5 +1,6 @@
 # filejson
 
+[![CI](https://github.com/bchr02/filejson/actions/workflows/ci.yml/badge.svg)](https://github.com/bchr02/filejson/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/filejson.svg)](https://www.npmjs.com/package/filejson)
 [![npm downloads](https://img.shields.io/npm/dm/filejson.svg)](https://www.npmjs.com/package/filejson)
 [![Node.js Version](https://img.shields.io/node/v/filejson.svg)](https://nodejs.org)
