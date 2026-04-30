@@ -14,9 +14,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Useful for first-run scenarios where the data file may not yet exist
 - **Named exports**: `module.exports.Filejson` and `module.exports.default` now exposed alongside the default export, enabling ESM-style and destructured imports (`const { Filejson } = require('filejson')`)
 
-## [1.2.0] - Previous Release
+## [1.2.0] - 2025-10-01
 
-(Changes not documented)
+### Added
+
+- **TypeScript definitions**: New `index.d.ts` type-definition file providing full TypeScript support
+  - Typed constructor options (`FileJsonOptions`), `load()`, `save()`, `saveSync()`, `set()`, `get()`, `pause()`, `resume()` and all events
+  - Enables `import FileJson from 'filejson'` in TypeScript projects with correct type inference
+- **`llms.txt`**: Machine-readable documentation file for AI/LLM tooling that describes the full API, configuration options, and usage patterns in a compact format
+- **Improved JSDoc**: `save()` callback parameter and `handler` argument are now fully documented in the source; fixed a misleading inline comment in the auto-save handler
+- **GitHub Actions CI**: New `.github/workflows/ci.yml` runs the test suite against Node.js 18, 20, and 22 on every push and pull request
+  - Matrix strategy with `fail-fast: false` so all Node versions are always tested independently
+  - Codecov integration uploads `lcov.info` coverage data (Node 20 only) to track coverage trends over time
+  - Live CI and coverage badges added to README
+- **`CONTRIBUTING.md`**: Step-by-step guide covering forking, installing, branching, running tests, linting, and opening a pull request
+- **`SECURITY.md`**: Security policy with supported-versions table and instructions for responsibly disclosing vulnerabilities
+
+### Changed
+
+- **Default `saveDelay` changed from `0ms` to `100ms`**: Auto-saves are now debounced by 100 ms by default, which significantly reduces disk I/O for applications that mutate data in rapid succession
+  - To restore the previous immediate-save behaviour, set `saveDelay: 0` in the constructor options
+  - Manual calls to `save()` and `saveSync()` are never affected by `saveDelay`
+
+### Fixed
+
+- Increased timing margins in the Mocha test suite to prevent intermittent failures on slower or heavily loaded CI runners
 
 ## [1.1.0] - 2025-10-01
 
