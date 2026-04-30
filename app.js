@@ -22,6 +22,12 @@ function Filejson(cfg) {
     }
   }.bind(this);
 
+  /**
+   * Proxy handler that intercepts property get, set, and delete operations on
+   * the Filejson instance and its nested `contents` object. Any mutation to
+   * `contents` automatically schedules a debounced save to disk.
+   * @private
+   */
   var handler = {
     get: function (target, key, receiver) {
       if (key === "__isProxy") {
@@ -145,6 +151,27 @@ function Filejson(cfg) {
     });
   };
 
+  /**
+   * Asynchronously saves the current contents to the configured file.
+   * Debounces rapid successive calls using `cfg.saveDelay` (default 100ms)
+   * so that only the last call within the delay window triggers a disk write.
+   * Uses atomic writes (write-to-temp + rename) when `cfg.atomicWrites` is
+   * enabled (the default).
+   *
+   * @param {function} [callback] - Optional Node-style callback `(error, instance)`.
+   *   If omitted a Promise is returned instead.
+   * @returns {Promise|undefined} Returns a Promise when no callback is provided.
+   *
+   * @example
+   * // Callback style
+   * file.save(function(err) {
+   *   if (err) console.error(err);
+   * });
+   *
+   * @example
+   * // Promise / async-await style
+   * await file.save();
+   */
   this.save = function (callback) {
     // Return a Promise if no callback is provided (for async/await support)
     if (typeof callback !== "function") {
@@ -164,7 +191,7 @@ function Filejson(cfg) {
     // Clear any pending save timer (debounce)
     clearTimeout(scheduledTimers);
 
-    // Schedule save with configured delay (default 0 for immediate)
+    // Schedule save with configured delay (default 100ms)
     scheduledTimers = setTimeout(
       function () {
         let contents;
