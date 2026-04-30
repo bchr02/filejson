@@ -10,7 +10,7 @@
   "scripts": {
     "test": "mocha test/filejson.test.js --timeout 5000",
     "test:watch": "mocha test/filejson.test.js --watch",
-    "test:coverage": "c8 --reporter=text --reporter=html mocha test/filejson.test.js --timeout 5000",
+    "test:coverage": "c8 --reporter=text --reporter=html --reporter=lcov mocha test/filejson.test.js --timeout 5000",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

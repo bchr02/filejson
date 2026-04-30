@@ -5,7 +5,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/filejson.svg)](https://www.npmjs.com/package/filejson)
 [![Node.js Version](https://img.shields.io/node/v/filejson.svg)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Test Coverage](https://img.shields.io/badge/coverage-92%25-brightgreen.svg)](https://github.com/bchr02/filejson)
+[![Test Coverage](https://codecov.io/gh/bchr02/filejson/branch/master/graph/badge.svg)](https://codecov.io/gh/bchr02/filejson)
 
 > **Zero-config automatic JSON file persistence** with atomic writes, debouncing, and crash safety. Just modify objects—changes save automatically!
 
