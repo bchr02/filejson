@@ -115,6 +115,7 @@ function Filejson(cfg) {
     verbose: cfg.verbose || false,
     saveDelay: typeof cfg.saveDelay === "number" ? cfg.saveDelay : 100,
     atomicWrites: typeof cfg.atomicWrites === "boolean" ? cfg.atomicWrites : true,
+    createIfMissing: typeof cfg.createIfMissing === "boolean" ? cfg.createIfMissing : false,
   };
 
   // Boolean - pauses any future changes to this.contents from auto triggering a save to disk
@@ -339,6 +340,15 @@ function Filejson(cfg) {
         "utf-8",
         function (error, contents) {
           if (error) {
+            if (error.code === "ENOENT" && self.cfg.createIfMissing) {
+              updateContentsWithoutSaving({});
+              self.save(
+                function (saveError) {
+                  callback(saveError, self);
+                }
+              );
+              return;
+            }
             callback(error, this);
             return;
           }
@@ -371,3 +381,5 @@ function Filejson(cfg) {
 }
 
 module.exports = Filejson;
+module.exports.Filejson = Filejson;
+module.exports.default = Filejson;

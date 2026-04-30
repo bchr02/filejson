@@ -944,4 +944,87 @@ describe("Filejson", function () {
       });
     });
   });
+
+  describe("createIfMissing option", function () {
+    it("should create file with empty object when it does not exist (callback)", function (done) {
+      const testFile = path.join(testDir, "create-missing-test.json");
+
+      const file = new Filejson({ createIfMissing: true, saveDelay: 0 });
+      file.load(testFile, function (error, instance) {
+        assert.strictEqual(error, null);
+        assert.deepStrictEqual(instance.contents, {});
+
+        // File should now exist on disk
+        setTimeout(function () {
+          assert.strictEqual(fs.existsSync(testFile), true, "File should have been created");
+          const data = JSON.parse(fs.readFileSync(testFile, "utf-8"));
+          assert.deepStrictEqual(data, {});
+          done();
+        }, 50);
+      });
+    });
+
+    it("should create file with empty object when it does not exist (Promise)", function (done) {
+      const testFile = path.join(testDir, "create-missing-promise-test.json");
+
+      const file = new Filejson({ createIfMissing: true, saveDelay: 0 });
+      file
+        .load(testFile)
+        .then(function (instance) {
+          assert.deepStrictEqual(instance.contents, {});
+
+          setTimeout(function () {
+            assert.strictEqual(fs.existsSync(testFile), true, "File should have been created");
+            const data = JSON.parse(fs.readFileSync(testFile, "utf-8"));
+            assert.deepStrictEqual(data, {});
+            done();
+          }, 50);
+        })
+        .catch(done);
+    });
+
+    it("should still return ENOENT error when createIfMissing is false (default)", function (done) {
+      const testFile = path.join(testDir, "no-create-missing-test.json");
+
+      const file = new Filejson();
+      file.load(testFile, function (error, _instance) {
+        assert.notStrictEqual(error, null);
+        assert.strictEqual(error.code, "ENOENT");
+        done();
+      });
+    });
+
+    it("should load existing file normally when createIfMissing is true", function (done) {
+      const testFile = path.join(testDir, "existing-with-create-flag.json");
+      const testData = { existing: "data" };
+      fs.writeFileSync(testFile, JSON.stringify(testData));
+
+      const file = new Filejson({ createIfMissing: true });
+      file.load(testFile, function (error, instance) {
+        assert.strictEqual(error, null);
+        assert.deepStrictEqual(instance.contents, testData);
+        done();
+      });
+    });
+  });
+
+  describe("Named exports", function () {
+    it("should export Filejson as a named export", function () {
+      const { Filejson: NamedFilejson } = require("../app.js");
+      assert.strictEqual(typeof NamedFilejson, "function");
+      const instance = new NamedFilejson();
+      assert.strictEqual(typeof instance.load, "function");
+    });
+
+    it("should export Filejson as default property", function () {
+      const mod = require("../app.js");
+      assert.strictEqual(typeof mod.default, "function");
+      assert.strictEqual(mod.default, mod);
+    });
+
+    it("default export and named export should be the same constructor", function () {
+      const mod = require("../app.js");
+      assert.strictEqual(mod.Filejson, mod);
+    });
+  });
 });

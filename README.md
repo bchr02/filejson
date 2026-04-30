@@ -17,134 +17,26 @@ Seamlessly sync JavaScript values to JSON files in the background. Changes are a
 - 🛡️ **Crash-Safe Atomic Writes** - No corrupted files, even during power failures
 - ⚡ **Smart Debouncing** - Efficient disk I/O with configurable delays
 - 💾 **Multiple API Styles** - Callbacks, Promises, or async/await
-- 🎯 **TypeScript Ready** - Full type definitions included
+- 🎯 **TypeScript Ready** - Full type definitions with named and default exports
 - 📦 **Tiny Footprint** - Zero dependencies, pure Node.js
-- ✅ **Well Tested** - 92% test coverage with 41 comprehensive tests
-
-## Requirements
-
-- **Node.js 6.0.0 or higher** (Node.js 14+ recommended for async/await support)
-- Native support for [ES6 Proxy and Reflect](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
-
-### Why Proxy Support Matters
-
-Proxy support is key to filejson's elegant API. Unlike other modules that require explicit function calls for each save operation, filejson automatically detects and saves changes:
-
-```javascript
-// Other modules require explicit save calls
-otherModule.set("key", "value");
-otherModule.save();
-
-// filejson saves automatically - just modify the object
-file.contents.key = "value"; // ✨ Automatically saved!
-```
-
-### Node.js Version Support
-
-| Node.js Version   | Status             | Features Available                  |
-| ----------------- | ------------------ | ----------------------------------- |
-| 18+ (Current LTS) | ✅ **Recommended** | All features, best performance      |
-| 14+               | ✅ Supported       | Async/await, Promises, all features |
-| 12+               | ✅ Supported       | Async/await, Promises, all features |
-| 6-11              | ⚠️ Legacy          | Callbacks only, limited testing     |
-| < 6               | ❌ Not Supported   | Requires polyfills (see below)      |
-
-### Legacy Node.js Support (< 6)
-
-For Node.js versions older than 6, you'll need additional setup. See the [legacy installation guide](#additional-installation-and-usage-steps-for-those-using-nodejs-5-or-earlier) below.
+- ✅ **Well Tested** - 92% test coverage with 48 comprehensive tests
 
 ## Installation
 
-```javascript
+```bash
 npm install filejson --save
 ```
 
-[If you are using Node.js 5 or earlier, some additional installation and usage steps are needed. Click here.](#additional-installation-and-usage-steps-for-those-using-nodejs-5-or-earlier)
-
-## Testing
-
-This package includes a comprehensive test suite using Mocha.
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-```
-
-## Code Quality
-
-This package uses ESLint for code quality and consistency.
-
-```bash
-# Run ESLint
-npm run lint
-
-# Auto-fix ESLint issues
-npm run lint:fix
-```
-
 ## Example usage
-
-### Callback-based (traditional)
-
-```javascript
-const Filejson = require("filejson");
-
-try {
-  const file1 = new Filejson();
-
-  file1.load("file1.json", function (error, file) {
-    if (error) {
-      console.error("Load error:", error);
-      return;
-    }
-
-    console.log(file.contents); // outputs {"abc": "123"}
-
-    file.contents.msg = "Hello World"; // saves {"abc": "123", "msg": "Hello World"}
-
-    console.log(file.contents); // outputs {"abc": "123", "msg": "Hello World"}
-  });
-} catch (error) {
-  console.error("Initialization error:", error);
-}
-```
-
-### Promise-based (modern)
-
-```javascript
-const Filejson = require("filejson");
-
-try {
-  const file1 = new Filejson();
-
-  file1
-    .load("file1.json")
-    .then((file) => {
-      console.log(file.contents); // outputs {"abc": "123"}
-
-      file.contents.msg = "Hello World"; // saves {"abc": "123", "msg": "Hello World"}
-
-      console.log(file.contents); // outputs {"abc": "123", "msg": "Hello World"}
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-} catch (error) {
-  console.error("Initialization error:", error);
-}
-```
 
 ### Async/Await (recommended)
 
 ```javascript
 const Filejson = require("filejson");
+// or: import { Filejson } from "filejson";
 
 try {
-  const file1 = new Filejson();
-  const file = await file1.load("file1.json"); // file1.json contains {"abc": "123"}
+  const file = await new Filejson().load("file1.json"); // file1.json contains {"abc": "123"}
 
   console.log(file.contents); // outputs {"abc": "123"}
 
@@ -156,7 +48,54 @@ try {
 }
 ```
 
-> **Note:** Top-level `await` requires Node.js >= 14.8. If using an older version, wrap the code in an async function.
+Unlike other modules, you never need to call a separate save function—filejson detects changes and persists them automatically:
+
+```javascript
+// Other modules require explicit save calls
+otherModule.set("key", "value");
+otherModule.save();
+
+// filejson saves automatically - just modify the object
+file.contents.key = "value"; // ✨ Automatically saved!
+```
+
+### Promise-based
+
+```javascript
+const Filejson = require("filejson");
+
+new Filejson()
+  .load("file1.json")
+  .then((file) => {
+    console.log(file.contents); // outputs {"abc": "123"}
+
+    file.contents.msg = "Hello World"; // saves {"abc": "123", "msg": "Hello World"}
+
+    console.log(file.contents); // outputs {"abc": "123", "msg": "Hello World"}
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
+```
+
+### Callback-based
+
+```javascript
+const Filejson = require("filejson");
+
+new Filejson().load("file1.json", function (error, file) {
+  if (error) {
+    console.error("Load error:", error);
+    return;
+  }
+
+  console.log(file.contents); // outputs {"abc": "123"}
+
+  file.contents.msg = "Hello World"; // saves {"abc": "123", "msg": "Hello World"}
+
+  console.log(file.contents); // outputs {"abc": "123", "msg": "Hello World"}
+});
+```
 
 ## API Reference
 
@@ -174,6 +113,7 @@ new Filejson([config]);
   - `verbose` (boolean): Enable verbose logging (default: false)
   - `saveDelay` (number): Milliseconds to wait before saving after a change (default: 100ms)
   - `atomicWrites` (boolean): Enable atomic writes for crash safety (default: true)
+  - `createIfMissing` (boolean): Create the file with `{}` if it doesn't exist on `load()` (default: false)
 
 **Example:**
 
@@ -213,6 +153,10 @@ const instance = await file.load("data.json");
 
 // With initial data
 await file.load("data.json", { initial: "data" });
+
+// Auto-create file if missing
+const file = new Filejson({ createIfMissing: true });
+const instance = await file.load("settings.json"); // creates settings.json with {} if absent
 ```
 
 #### save([callback])
@@ -444,8 +388,8 @@ await file.save(); // Saves immediately, bypassing the 500ms delay
 
 ### Recommended Delays
 
-- `0ms` (default): Immediate saves, no debouncing - best for infrequent updates
-- `50-100ms`: Good balance for most applications with moderate update frequency
+- `0ms`: Immediate saves, no debouncing - best for infrequent updates
+- `100ms` **(default)**: Good balance for most applications with moderate update frequency
 - `200-500ms`: Suitable for high-frequency updates (e.g., real-time data)
 - `1000ms+`: For very high-frequency updates where data loss tolerance is acceptable
 
@@ -495,23 +439,3 @@ file.contents.value = "data";
 - **Testing environments** where you want to observe partial write behavior
 
 **Note:** For most use cases, keep atomic writes enabled (the default) for maximum safety.
-
-## Additional installation and usage steps for those using Node.js 5 or earlier
-
-- You will need a polyfill such as [harmony-reflect](https://github.com/tvcutsem/harmony-reflect):
-
-```
-npm install harmony-reflect --save
-```
-
-- In addition to requiring filejson, you will need to require harmony-reflect at the top of your app, like this:
-
-```javascript
-var Reflect = require("harmony-reflect");
-```
-
-- Lastly, every time you run your app you will need to use the node --harmony_proxies flag, like this:
-
-```
-node --harmony_proxies index.js
-```

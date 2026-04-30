@@ -28,6 +28,12 @@ declare namespace Filejson {
      * Enable atomic writes for crash safety (default: true)
      */
     atomicWrites?: boolean;
+
+    /**
+     * When true, automatically creates the file with an empty object ({})
+     * if it does not exist instead of throwing an ENOENT error (default: false)
+     */
+    createIfMissing?: boolean;
   }
 
   interface FilejsonInstance<T = any> {
@@ -171,4 +177,5 @@ declare class Filejson<T = any> {
   saveSync(): this;
 }
 
-export = Filejson;
+export { Filejson };
+export default Filejson;
