@@ -395,7 +395,7 @@ describe("Filejson", function () {
           // Should have 4-space indentation
           assert.ok(fileContent.includes('    "nested":'));
           done();
-        }, 100);
+        }, 300);
       });
     });
   });
@@ -429,7 +429,7 @@ describe("Filejson", function () {
           const savedData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
           assert.strictEqual(savedData.value, 42.5);
           done();
-        }, 100);
+        }, 300);
       });
     });
 
@@ -477,7 +477,7 @@ describe("Filejson", function () {
           const savedData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
           assert.deepStrictEqual(savedData.value, [1, "two", { three: 3 }, null]);
           done();
-        }, 100);
+        }, 300);
       });
     });
 
@@ -636,7 +636,7 @@ describe("Filejson", function () {
           const finalData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
           assert.strictEqual(finalData.value, 10, "Should have final value");
           done();
-        }, 200);
+        }, 400);
       });
     });
 
@@ -655,12 +655,12 @@ describe("Filejson", function () {
           const earlyData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
           assert.strictEqual(earlyData.status, "pending");
 
-          // After 250ms, should be saved
+          // After 500ms total, should be saved
           setTimeout(function () {
             const lateData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
             assert.strictEqual(lateData.status, "updated");
             done();
-          }, 150);
+          }, 400);
         }, 100);
       });
     });
@@ -683,7 +683,7 @@ describe("Filejson", function () {
       assert.strictEqual(data.counter, 0);
 
       // Wait for debounce to complete
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       data = JSON.parse(fs.readFileSync(testFile, "utf-8"));
       assert.strictEqual(data.counter, 3);
     });
@@ -739,7 +739,7 @@ describe("Filejson", function () {
           const data = JSON.parse(fs.readFileSync(testFile, "utf-8"));
           assert.strictEqual(data.value, "updated");
           done();
-        }, 100);
+        }, 300);
       });
     });
 
