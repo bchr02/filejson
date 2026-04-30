@@ -655,7 +655,7 @@ describe("Filejson", function () {
           const earlyData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
           assert.strictEqual(earlyData.status, "pending");
 
-          // After 350ms total, should be saved
+          // After 500ms total, should be saved
           setTimeout(function () {
             const lateData = JSON.parse(fs.readFileSync(testFile, "utf-8"));
             assert.strictEqual(lateData.status, "updated");
