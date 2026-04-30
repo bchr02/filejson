@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-04-30
+
+### Added
+
+- **`createIfMissing` option**: New configuration option that, when set to `true`, automatically creates the JSON file if it does not exist on `load()` instead of returning an error
+  - Defaults to `false` to preserve existing behaviour
+  - Useful for first-run scenarios where the data file may not yet exist
+- **Named exports**: `module.exports.Filejson` and `module.exports.default` now exposed alongside the default export, enabling ESM-style and destructured imports (`const { Filejson } = require('filejson')`)
+
+## [1.2.0] - Previous Release
+
+(Changes not documented)
+
 ## [1.1.0] - 2025-10-01
 
 ### Added
