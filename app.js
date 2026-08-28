@@ -1,5 +1,5 @@
 const fs = require("fs");
-const path = require("path");
+const crypto = require("crypto"); // eslint-disable-line no-redeclare
 
 /**
  * @class
@@ -63,7 +63,11 @@ function Filejson(cfg) {
       const loopAll = function (obj, parent) {
         let tree = parent || "";
 
-        for (const key in obj) {
+        for (const key of Object.keys(obj)) {
+          // Skip dangerous keys to prevent prototype pollution
+          if (key === "__proto__" || key === "constructor" || key === "prototype") {
+            continue;
+          }
           if (typeof obj[key] !== "object" || (typeof obj[key] === "object" && obj[key] === null) /* fixes #10 */) {
             check(obj[key], tree);
           } else {
@@ -126,7 +130,7 @@ function Filejson(cfg) {
    * @private
    */
   const atomicWrite = function (filename, contents, callback) {
-    const tmpFilename = filename + ".tmp" + Date.now() + Math.random().toString(36).substring(7);
+    const tmpFilename = filename + ".tmp" + crypto.randomBytes(16).toString("hex");
 
     fs.writeFile(tmpFilename, contents, function (writeError) {
       if (writeError) {
@@ -185,7 +189,7 @@ function Filejson(cfg) {
               resolve(instance);
             }
           });
-        }.bind(this)
+        }.bind(this),
       );
     }
 
@@ -217,13 +221,13 @@ function Filejson(cfg) {
                 log("saved " + this.cfg.filename);
               }
               callback(error, this);
-            }.bind(this)
+            }.bind(this),
           );
         } else {
           this.save(callback);
         }
       }.bind(this),
-      this.cfg.saveDelay
+      this.cfg.saveDelay,
     );
   };
 
@@ -255,7 +259,7 @@ function Filejson(cfg) {
 
     // Write synchronously with or without atomic writes
     if (this.cfg.atomicWrites) {
-      const tmpFilename = this.cfg.filename + ".tmp" + Date.now() + Math.random().toString(36).substring(7);
+      const tmpFilename = this.cfg.filename + ".tmp" + crypto.randomBytes(16).toString("hex");
 
       try {
         fs.writeFileSync(tmpFilename, contents);
@@ -267,7 +271,7 @@ function Filejson(cfg) {
           if (fs.existsSync(tmpFilename)) {
             fs.unlinkSync(tmpFilename);
           }
-        } catch (cleanupError) {
+        } catch (_cleanupError) {
           // Ignore cleanup errors
         }
         throw error;
@@ -315,7 +319,7 @@ function Filejson(cfg) {
               }
             });
           }
-        }.bind(this)
+        }.bind(this),
       );
     }
 
@@ -332,7 +336,7 @@ function Filejson(cfg) {
       this.save(
         function (error) {
           callback(error, this);
-        }.bind(this)
+        }.bind(this),
       );
     } else {
       fs.readFile(
@@ -342,11 +346,9 @@ function Filejson(cfg) {
           if (error) {
             if (error.code === "ENOENT" && self.cfg.createIfMissing) {
               updateContentsWithoutSaving({});
-              self.save(
-                function (saveError) {
-                  callback(saveError, self);
-                }
-              );
+              self.save(function (saveError) {
+                callback(saveError, self);
+              });
               return;
             }
             callback(error, this);
@@ -366,7 +368,7 @@ function Filejson(cfg) {
             callback(null, this);
           }
           return;
-        }.bind(this)
+        }.bind(this),
       );
     }
   };

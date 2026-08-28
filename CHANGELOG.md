@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-08-26
+
+### Fixed
+
+- Prevented prototype pollution: `loopAll` now skips `__proto__`, `constructor`, and `prototype` keys and uses `Object.keys()` instead of `for...in` to avoid iterating inherited properties.
+- Replaced `Math.random()` with `crypto.randomBytes()` for generating atomic temp file suffixes, ensuring cryptographically secure randomness.
+
+### Changed
+
+- Upgraded dev dependencies: `mocha` 8→11, `eslint` 8→10, `c8` 10→12.
+- Migrated ESLint config from legacy `.eslintrc` format to ESLint 10 flat config (`eslint.config.mjs`).
+- Added `overrides` for `diff` and `serialize-javascript` to pin transitive deps to patched versions (0 audit vulnerabilities).
+
 ## [1.3.0] - 2026-04-30
 
 ### Added

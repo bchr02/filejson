@@ -21,7 +21,7 @@ describe("Filejson", function () {
         const filePath = path.join(testDir, file);
         try {
           fs.unlinkSync(filePath);
-        } catch (err) {
+        } catch (_err) {
           // Ignore errors, file might already be deleted
         }
       });
@@ -38,7 +38,7 @@ describe("Filejson", function () {
           const filePath = path.join(testDir, file);
           try {
             fs.unlinkSync(filePath);
-          } catch (err) {
+          } catch (_err) {
             // Ignore
           }
         });
@@ -1004,6 +1004,82 @@ describe("Filejson", function () {
         assert.strictEqual(error, null);
         assert.deepStrictEqual(instance.contents, testData);
         done();
+      });
+    });
+  });
+
+  describe("Security", function () {
+    it("should not pollute Object prototype via __proto__ key in loaded JSON", function (done) {
+      const testFile = path.join(testDir, "proto-pollution-test.json");
+      fs.writeFileSync(testFile, JSON.stringify({ __proto__: { polluted: true } }));
+
+      const before = Object.prototype.polluted;
+
+      const file = new Filejson();
+      file.load(testFile, function (error, _instance) {
+        assert.strictEqual(error, null);
+        assert.strictEqual(Object.prototype.polluted, before, "Object.prototype should not be polluted");
+        assert.strictEqual({}.polluted, before, "Plain objects should not have polluted property");
+        done();
+      });
+    });
+
+    it("should not pollute Object prototype via nested __proto__ key", function (done) {
+      const testFile = path.join(testDir, "nested-proto-pollution-test.json");
+      fs.writeFileSync(testFile, JSON.stringify({ data: { __proto__: { injected: true } } }));
+
+      const before = Object.prototype.injected;
+
+      const file = new Filejson();
+      file.load(testFile, function (error, _instance) {
+        assert.strictEqual(error, null);
+        assert.strictEqual(Object.prototype.injected, before, "Object.prototype should not be polluted via nested key");
+        done();
+      });
+    });
+
+    it("should not allow constructor or prototype key pollution", function (done) {
+      const testFile = path.join(testDir, "constructor-pollution-test.json");
+      const malicious = { constructor: { prototype: { pwned: true } } };
+      fs.writeFileSync(testFile, JSON.stringify(malicious));
+
+      const before = {}.pwned;
+
+      const file = new Filejson();
+      file.load(testFile, function (error, _instance) {
+        assert.strictEqual(error, null);
+        assert.strictEqual({}.pwned, before, "Plain objects should not have pwned property from constructor pollution");
+        done();
+      });
+    });
+
+    it("should use cryptographically random temp file names (not Math.random)", function (done) {
+      const testFile = path.join(testDir, "atomic-random-test.json");
+      fs.writeFileSync(testFile, JSON.stringify({ value: 1 }));
+
+      const originalRename = fs.rename;
+      const tempNames = [];
+
+      fs.rename = function (source, target, callback) {
+        if (source.includes(".tmp")) {
+          tempNames.push(path.basename(source));
+        }
+        originalRename.call(fs, source, target, callback);
+      };
+
+      const file = new Filejson({ saveDelay: 0 });
+      file.load(testFile, function (error, instance) {
+        assert.strictEqual(error, null);
+        instance.contents.value = 2;
+
+        setTimeout(function () {
+          fs.rename = originalRename;
+          assert.ok(tempNames.length > 0, "Should have created a temp file");
+          // Temp name should contain a 32-char hex string (16 bytes = 32 hex chars), not a timestamp
+          const tmpName = tempNames[0];
+          assert.ok(/\.tmp[0-9a-f]{32}$/.test(tmpName), "Temp file name should use hex random suffix: " + tmpName);
+          done();
+        }, 100);
       });
     });
   });
