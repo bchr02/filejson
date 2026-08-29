@@ -29,7 +29,7 @@ You can expect an acknowledgement within **48 hours** and a resolution or status
 filejson is a file persistence library. Key security considerations include:
 
 - **File path handling** — ensure filenames are validated by the calling application to prevent path traversal attacks.
-- **Untrusted JSON input** — filejson uses `JSON.parse`, which is safe against prototype pollution in modern Node.js, but callers should validate data from untrusted sources before storing it.
+- **Prototype pollution** — filejson actively prevents prototype pollution when loading JSON files: `__proto__`, `constructor`, and `prototype` keys are silently skipped during object traversal. Callers should still validate data from untrusted sources before acting on it.
 - **File permissions** — filejson writes files using the process's default umask. Production deployments should ensure appropriate file system permissions.
 
 ## Disclosure Policy

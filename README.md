@@ -19,9 +19,11 @@ Seamlessly sync JavaScript values to JSON files in the background. Changes are a
 - 💾 **Multiple API Styles** - Callbacks, Promises, or async/await
 - 🎯 **TypeScript Ready** - Full type definitions with named and default exports
 - 📦 **Tiny Footprint** - Zero dependencies, pure Node.js
-- ✅ **Well Tested** - 92% test coverage with 48 comprehensive tests
+- ✅ **Well Tested** - 92% test coverage with 52 comprehensive tests
 
 ## Installation
+
+**Requires Node.js >= 20.0.0**
 
 ```bash
 npm install filejson --save

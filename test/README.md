@@ -46,6 +46,11 @@ The test suite covers:
 - All JSON data types (string, number, boolean, null, object, array)
 - Deeply nested structures
 
+### Security
+
+- Prototype pollution prevention via `__proto__`, `constructor`, and `prototype` key filtering
+- Cryptographically secure temp file name generation
+
 ### API Compatibility
 
 - Traditional callback-based API
