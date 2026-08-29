@@ -4,6 +4,10 @@
   "description": "Zero-config automatic JSON file persistence with atomic writes, debouncing, and crash safety. Just modify objects, changes save automatically.",
   "main": "app.js",
   "types": "index.d.ts",
+  "files": [
+    "app.js",
+    "index.d.ts"
+  ],
   "engines": {
     "node": ">=20.0.0"
   },
